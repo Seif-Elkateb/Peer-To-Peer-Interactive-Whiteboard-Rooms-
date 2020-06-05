@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Zoomasty</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+
+
+
+
+<header>
+  <h1>Zoomasty Interactive Peer To Peer Whiteboard</h1>
+  <h2>Number of Users Connected : <span id="occupancy">0</span></h2>
+</header>
+<div id="colorpanel">
+      <center><p>Colors</p></center>
+       <div id="contain">
+         <div class="palette red" id="red" onclick="changeColors(this)"></div>
+         <div class="palette red1" id="red1" onclick="changeColors(this)"></div>
+         <div class="palette red2" id="red2" onclick="changeColors(this)"></div>
+         <div class="palette orange" id="orange" onclick="changeColors(this)"></div>
+         <div class="palette orange1" id="orange1" onclick="changeColors(this)"></div>
+         <div class="palette orange2" id="orange2" onclick="changeColors(this)"></div>
+         <div class="palette yellow" id="yellow" onclick="changeColors(this)"></div>
+         <div class="palette yellow1" id="yellow1" onclick="changeColors(this)"></div>
+         <div class="palette yellow2" id="yellow2" onclick="changeColors(this)"></div>
+         <div class="palette green" id="green" onclick="changeColors(this)"></div>
+         <div class="palette green1" id="green1" onclick="changeColors(this)"></div>
+         <div class="palette green2" id="green2" onclick="changeColors(this)"></div>
+         <div class="palette blue" id="blue" onclick="changeColors(this)"></div>
+         <div class="palette blue1" id="blue1" onclick="changeColors(this)"></div>
+         <div class="palette blue2" id="blue2" onclick="changeColors(this)"></div>
+         <div class="palette indigo" id="indigo" onclick="changeColors(this)"></div>
+         <div class="palette indigo1" id="indigo1" onclick="changeColors(this)"></div>
+         <div class="palette indigo2" id="indigo2" onclick="changeColors(this)"></div>
+         <div class="palette purple" id="purple" onclick="changeColors(this)"></div>
+         <div class="palette purple1" id="purple1" onclick="changeColors(this)"></div>
+         <div class="palette purple2" id="purple2" onclick="changeColors(this)"></div>
+         <div class="palette black" id="black" onclick="changeColors(this)"></div>
+         <div class="palette black1" id="black1" onclick="changeColors(this)"></div>
+         <div class="palette black2" id="black2" onclick="changeColors(this)"></div>
+       </div>
+
+       <div id="erasing"><center><p>Eraser</p></center></div>
+       <div class="palette white" id="erase" onclick="changeColors(this)"></div>
+       <br>
+       </div>
+
+<canvas id="drawCanvas" width="950" height="1000">Canvas not working? :-/</canvas>
+<div id="linepanel">
+       <center><p>Brush Width</p></center>
+        <form>
+          <input type="range" id="myRange" name="amountRange" value="1" min="1" max="50" oninput="this.form.amountInput.value=this.value" onclick="lineWidthRange()">
+          <div id="sliderInput">
+            </p><input type="number" name="amountInput" min="1" max="50" value="1" oninput="this.form.amountRange.value=this.value" />
+          </div>
+        </form>
+		<br />
+		<br />
+		<br />
+		<div id="space">
+         <button class="button" onclick="erase()">CLEAR</button>
+         <button class="button"><a href="#" id="dwnld" download="my-file-name.png">SAVE</a></button>
+      </div>
+        <br />
+      </div>   
+
+    </div>
+
+
+  <script src='https://cdn.pubnub.com/pubnub.min.js'></script>
+    <script>
+var channel = 'draw';
+
+var pubnub = PUBNUB.init({
+		publish_key: 'pub-c-e82de905-4221-4ee6-bd78-6e2eea1dd73a',
+		subscribe_key: 'sub-c-9d78773e-a575-11ea-ae1a-36d49400aaff',
+});
+</script>
+  <script  src="./script.js"></script>
+
+</body>
+</html>

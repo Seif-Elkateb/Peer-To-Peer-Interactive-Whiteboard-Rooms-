@@ -1,0 +1,167 @@
+P2P Interactive Whiteboard Rooms >- Zoomasty Multiusers Interactive Whiteboard
+
+Technologies used :
+1- html
+2-css 
+3-javascript
+4-pubnub API
+5- Canvas for drawing 
+html,css or javascript are so much well known  that  we will not get into speaking about them so we will begin with introducing what is  html canvas and pubnub API
+
+
+What is HTML Canvas?
+The HTML <canvas> element is used to draw graphics, on the fly, via JavaScript  and because web browsers vendors have improved  gpu acceleration and  the performance improved so much you could create  2d games using canvas 
+
+The <canvas> element is only a container for graphics. You must use JavaScript to actually draw the graphics.
+
+<canvas id="myCanvas" width="200" height="100"></canvas>
+
+the width and height here  represent the  width and height of the drawing area 
+
+
+
+what is pubnub?
+PubNub is a Realtime Communication Platform and realtime infrastructure-as-a-service. it allows real time communication with no delay it may be used as a communication infrastructure between clients  in applications that require real time communication like chat applications or video conferences  and here in our project we used it  to implement Peer To Peer Interactive Whiteboard rooms 
+
+
+how does the communication is done ?
+first we import the pubnub javascript library into  our  code  using script tag  and  then  we could go to site and upon registration  we could get unique keys that could be used for private communication between the clients and we specify  a channel  and define it's name  in our code that could  be used for whatever functionality 
+and every successful communication  require two keys  one for sending our date stream and one for  recieving and one for recieving our datastream.
+here in our project the publish key is used for sending the drawing coordinates array "plot" and the subscribe key is used for recieving it 
+
+
+functions or code used :
+
+1- <script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+this is pubbub library we are importing to our code 
+- - - - - - - - - - - - - - - 
+var PUBNUB = PUBNUB.init({
+    publish_key: our used key in our project for sender 
+    subscribe_key: our used key for recieving data stream
+  }); 
+
+ in this function we define the publish key and subscribe key that will be used to initiate the communication
+- - - - - - - - - - - - - - - 
+
+
+
+var canvas = document.getElementById('drawCanvas'); 
+var ctx = canvas.getContext('2d');
+ctx.lineWidth = x
+
+we first define canvas our javascript variable  that will point to the canvas tag
+next, we  specify that we will use 2d grahpics mode 
+and then we specify the width of the drawing pen 
+
+- - - - - - - - - - - - - - - 
+canvas.addEventListener('mousedown', startDraw, false);
+canvas.addEventListener('mousemove', draw, false);
+canvas.addEventListener('mouseup', endDraw, false);
+
+first let me introduce event listeners which is events that are triggered when we interact with the page  specifically "html tags" like when we click on an image 
+so here in this block of code we define our 3 events  that will happen while we are drawing 
+first mousedown event is triggered when we left click on the mouse it then  call the startDraw function.
+mouse move is triggered when we are left clicking the mouse and moving at the same time  then draw function is initialized 
+mouse up event is triggered when we are not clicking the mouse any more then enddraw function is called 
+- - - - - - - - - - - -  - - - - - -  - - - - - - - -
+beginPath() method  initialize the drawing  
+lineTo() connect each coordinate drawn  with the previous one so we could have our pen working 
+stroke() function apply the line width ,type and color to  the coordinates
+
+and isactive flag must be true to start drawing
+- - - - -  - - - -  - - - - - - - - - - -  - - -
+var isActive = false;
+var plots = [];
+
+this is the arry the will hold the coordinates that will be drawn on the client side and sent to other clients using the publish key 
+
+- - - - - - - - - - - - - - - - - - - - -- - - - -
+Now, we are going to write a draw function, which traces the mouse path by collecting the canvas coordinates into an array, then starts drawing the path on canvas with beginPath() method, connect each coordinate with lineTo(), andstroke() to complete drawing the path, while a flag, isActive is set true.
+unction draw(e) {
+  if(!isActive) return;
+
+  // cross-browser canvas coordinates
+  var x = e.offsetX || e.layerX - canvas.offsetLeft;
+  var y = e.offsetY || e.layerY - canvas.offsetTop; 
+
+
+  plots.push({x: x, y: y});    // we are pushing the collected coordinates to the plot array that will be drawn 
+
+  drawOnCanvas(plots);
+}
+ we are collecting the coordinates when the event is triggered and then pushing them to the arry that is passed to draw on canvas 
+- - - - - - - -  - - - - - - -  - - - - - - - - -
+
+function drawOnCanvas(color, plots) {
+  ctx.beginPath();
+  ctx.moveTo(plots[0].x, plots[0].y);
+
+  for(var i=1; i<plots.length; i++) {
+    ctx.lineTo(plots[i].x, plots[i].y);
+  }
+  ctx.stroke();
+}
+- - - - - - - - - - - - - - - -  - - - - - - - 
+
+function start_Draw(e) {
+  isActive = 1
+}
+
+function end_Draw(e) {
+  isActive = 0
+
+  plots = [];
+} 
+the draw function set isActive to true and end_draw set isActive to False , also we empty the array  after we have drawn the coordinates and sent them via the channel 
+
+- - - - - - - -  - - -  - - - -  - - - - - - -
+
+pubnub.publish({
+    channel: channel,
+    message: { 
+        plots: plots // your array goes here
+    } 
+});
+
+the publish function we talked about  send  the channel  name and the datastream (message) to other clients connected to the same channel 
+- - - - - -  - -  - - - - - - - - - - - - - -
+
+pubnub.subscribe({
+    channel: channel,
+    callback: drawFromStream
+});
+
+this enable us to retrieve the data that is sent via other users  and call drawFromStream function that will draw the data 
+- - - - - -  - -  - - - - - - - - - - - - - -
+function drawFromStream(message) {
+    if(!message) return;        
+
+    ctx.beginPath();
+    drawOnCanvas(message.plots);
+}
+this message is envoked by the subscribe function which takes the message and then  call drawoncanvas function to start drawing  the retrieved coordinates
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
